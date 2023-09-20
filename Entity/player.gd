@@ -1,9 +1,11 @@
 extends KinematicBody2D
 
-var velocity = 200
+signal chest_opened
 
+var velocity = 200
 var life
 var max_life = 20
+var in_chest_zone = false
 
 var inventory = {}
 
@@ -24,8 +26,17 @@ func get_input(delta):
 		direction = Vector2.RIGHT
 	if Input.is_action_pressed("ui_left"):
 		direction = Vector2.LEFT
+	if Input.is_action_pressed("ui_interract") and in_chest_zone == true:
+		emit_signal("chest_opened")
 	move_and_collide(direction * velocity * delta)
 
 func _physics_process(delta):
 	get_input(delta)
-	
+
+func _on_Area2D_body_entered(body):
+	in_chest_zone = true
+	print("entered chest zone")
+
+func _on_Area2D_body_exited(body):
+	in_chest_zone = false
+	print("exit chest zone")
